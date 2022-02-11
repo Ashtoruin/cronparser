@@ -15,7 +15,11 @@ def split(input, start, end):
   output = list()
   mod = None
 
-  # Handle , first as it combines other entries
+  # Handle ? as it always exists alone if it does
+  if '?' in input:
+    return list()
+
+  # Handle , as it combines other entries
   if ',' in input:
     split_vals = input.split(',')
     for i in split_vals:
@@ -87,7 +91,7 @@ def cron_parse(input, day_month_to_string=False):
 def main():
   parser = argparse.ArgumentParser()
 
-  parser.add_argument('input', type=str, help='cron command to parse')
+  parser.add_argument('input', type=str, help='entire cron command to parse as a string: "0 0 1 * ? /some/command/here"')
   parser.add_argument('--str', dest='day_month_to_string', action='store_true') 
   args = parser.parse_args()
   parts = cron_parse(args.input, args.day_month_to_string)
