@@ -91,7 +91,7 @@ def cron_parse(input, day_month_to_string=False):
   print(f'day of month  {spacify(month_days)}')
   print(f'month         {spacify(months)}')
   print(f'day of week   {spacify(week_days)}')
-  print(f'command       {parts[5]}')
+  print(f'command       {spacify(parts[5:])}')
 
 
 # Entrypoint into script
