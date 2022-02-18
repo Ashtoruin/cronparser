@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import argparse
-
+import re
 # Handle , first as it combines other entries
 # Check  / next as it modifies the following entries
 # Handle - next as it is a subrange of values
@@ -40,7 +40,11 @@ def split(input, start, end):
   # Handle - next as it is a subrange of values
   elif '-' in input:
     ends = input.split('-')
-    output = list( range(int(ends[0]), int(ends[1])+1) )
+    if ends[0] <= ends[1]:
+      output = list( range(int(ends[0]), int(ends[1])+1) )
+    else:
+      output += list( range(start, int(ends[1])+1) )
+      output += list( range(int(ends[0]), end+1) )
   # Otherwise you a number
   else:
     output.append(int(input))
@@ -69,6 +73,13 @@ def spacify(input):
 # Explodes a cron command into a more human-readable format
 def cron_parse(input, day_month_to_string=False):
   parts = input.split(" ")
+  
+  command = 5
+  pattern = '^[0-9\*]'
+  years = None
+  if re.match(pattern, parts[5]):
+    command += 1
+    years = split(parts[5], 0, 9999)
   months = parts[3]
 
   for i in range(0, len(MONTHS)):
@@ -91,7 +102,9 @@ def cron_parse(input, day_month_to_string=False):
   print(f'day of month  {spacify(month_days)}')
   print(f'month         {spacify(months)}')
   print(f'day of week   {spacify(week_days)}')
-  print(f'command       {spacify(parts[5:])}')
+  if years is not None:
+    print(f'years         {spacify(years)}')
+  print(f'command       {spacify(parts[command:])}')
 
 
 # Entrypoint into script
