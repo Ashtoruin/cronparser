@@ -8,7 +8,7 @@ import argparse
 # Handle # last as it is a value
 
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
-DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 
 # Takes a cron field with default start/end and expands it to a list of integers
 def split(input, start, end):
@@ -36,10 +36,11 @@ def split(input, start, end):
   # Handle * next as it's the whole range of values
   if '*' in input:
     output = list( range(start, end+1) )
+
   # Handle - next as it is a subrange of values
   elif '-' in input:
     ends = input.split('-')
-    output = list( range(int(ends[0]), int(ends[1])) )
+    output = list( range(int(ends[0]), int(ends[1])+1) )
   # Otherwise you a number
   else:
     output.append(int(input))
@@ -68,12 +69,18 @@ def spacify(input):
 # Explodes a cron command into a more human-readable format
 def cron_parse(input, day_month_to_string=False):
   parts = input.split(" ")
+  months = parts[3]
+
+  for i in range(0, len(MONTHS)):
+    month = MONTHS[i-1]
+    months = months.replace(month, str(i))
 
   minutes = split(parts[0], 0, 59)
   hours = split(parts[1], 0, 23)
   month_days = split(parts[2], 1, 31)
-  months = split(parts[3], 1, 12)
-  week_days = split(parts[4], 0, 7)
+  months = split(months, 1, 12)
+  week_days = split(parts[4], 0, 6)
+
 
   if day_month_to_string:
     months = [ MONTHS[i-1] for i in months ]
